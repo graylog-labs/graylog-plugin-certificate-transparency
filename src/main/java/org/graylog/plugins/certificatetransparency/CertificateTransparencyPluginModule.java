@@ -1,5 +1,8 @@
 package org.graylog.plugins.certificatetransparency;
 
+import org.graylog.plugins.certificatetransparency.loginput.CertificateLogCodec;
+import org.graylog.plugins.certificatetransparency.loginput.CertificateLogInput;
+import org.graylog.plugins.certificatetransparency.loginput.CertificateLogTransport;
 import org.graylog2.plugin.PluginConfigBean;
 import org.graylog2.plugin.PluginModule;
 
@@ -15,6 +18,9 @@ public class CertificateTransparencyPluginModule extends PluginModule {
 
     @Override
     protected void configure() {
+        addCodec(CertificateLogCodec.NAME, CertificateLogCodec.class);
+        addTransport(CertificateLogTransport.NAME, CertificateLogTransport.class);
+        addMessageInput(CertificateLogInput.class);
     }
 
 }
