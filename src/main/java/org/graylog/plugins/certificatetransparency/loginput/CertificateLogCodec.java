@@ -2,6 +2,7 @@ package org.graylog.plugins.certificatetransparency.loginput;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import com.google.inject.assistedinject.Assisted;
 import info.debatty.java.stringsimilarity.Levenshtein;
@@ -97,7 +98,7 @@ public class CertificateLogCodec extends AbstractCodec {
     }
 
     private Map<String, Object> parseX500DataToFields(LdapName dn, String prefix) {
-        ImmutableMap.Builder<String, Object> fields = new ImmutableMap.Builder<>();
+        Map<String, Object> fields = Maps.newHashMap();
         for (Rdn issuer : dn.getRdns()) {
             switch(issuer.getType()) {
                 case "CN": // common_name
@@ -115,7 +116,7 @@ public class CertificateLogCodec extends AbstractCodec {
             }
         }
 
-        return fields.build();
+        return fields;
     }
 
     @Override
