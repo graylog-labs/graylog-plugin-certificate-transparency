@@ -1,7 +1,6 @@
 package org.graylog.plugins.certificatetransparency.loginput;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import com.google.inject.assistedinject.Assisted;
@@ -10,6 +9,7 @@ import org.certificatetransparency.ctlog.ParsedLogEntry;
 import org.certificatetransparency.ctlog.serialization.Deserializer;
 import org.elasticsearch.common.Strings;
 import org.graylog.plugins.certificatetransparency.loginput.ct.logs.json.CertificateTransparencyEntryResponse;
+import org.graylog.plugins.certificatetransparency.loginput.ct.util.DomainSplitter;
 import org.graylog2.plugin.Message;
 import org.graylog2.plugin.configuration.Configuration;
 import org.graylog2.plugin.inputs.annotations.ConfigClass;
@@ -102,7 +102,13 @@ public class CertificateLogCodec extends AbstractCodec {
         for (Rdn issuer : dn.getRdns()) {
             switch(issuer.getType()) {
                 case "CN": // common_name
-                    fields.put("ct_" + prefix + "_common_name", issuer.getValue().toString());
+                    String cn = issuer.getValue().toString();
+
+                    if (prefix.equals("subject")) { // TODO use enum etc, add tests
+                        fields.putAll(DomainSplitter.split(cn, "subject"));
+                    } else {
+                        fields.put("ct_" + prefix + "_common_name", cn);
+                    }
                     break;
                 case "C": // country
                     fields.put("ct_" + prefix + "_country", issuer.getValue().toString());
